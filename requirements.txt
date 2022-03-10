@@ -1,0 +1,8 @@
+certifi==2021.10.8
+Cython==0.29.28
+glfw==2.5.1
+glumpy==1.2.0
+numpy==1.22.3
+PyOpenGL==3.1.6
+triangle==20220202
+wincertstore==0.2
