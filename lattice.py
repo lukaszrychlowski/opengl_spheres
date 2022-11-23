@@ -18,31 +18,40 @@ fragment = """
     }"""
 
 window = app.Window(color=(1,1,1,0))
-
 theta, phi = 0, 0
-m = 5  
-n = (2*m)**3
-lattice = np.zeros((n,3), dtype=np.float32)
-#dx, dy, dz = 0, 0, 0
 
-i=0
-for x in range(-m,m,1):
-    for y in range(-m,m,1):
-        for z in range(-m,m,1):
-            dx = random.uniform(-.03, .03)
-            dy = random.uniform(-.03, .03)
-            dz = random.uniform(-.03, .03)
-            lattice[i]=[x+dx,y+dy,z+dz]
-            i += 1
 
-lattice = lattice*0.3
+def normalize(vec):
+    vec = vec * (1 / np.sqrt(vec[0]**2 + vec[1]**2 + vec[2]**2))
+    #print(np.sqrt(vec[0]**2 + vec[1]**2 + vec[2]**2))
+    return vec
 
+def random_point(sphere_radius): ## normalized
+    vec = np.array([np.random.normal(0, scale=1.0),
+                    np.random.normal(0, scale=1.0),
+                    np.random.normal(0, scale=1.0)])
+    return normalize(vec) * sphere_radius
+
+
+N = 10000
+lattice = np.zeros(3)
+
+for i in range(N):
+    lattice = np.append(lattice, random_point(100))
+for j in range(N):
+   lattice = np.append(lattice, random_point(10))
+for k in range(N):
+   lattice = np.append(lattice, random_point(50))
+for l in range(N):
+    lattice = np.append(lattice, random_point(200))
+for m in range(N):
+    lattice = np.append(lattice, random_point(150))
 #print(lattice)
 #np.savetxt("lattice1.csv", lattice, delimiter=";")
 
 program = gloo.Program(vertex, fragment)
 view = np.eye(4, dtype=np.float32)
-glm.translate(view, 0.2, 0.3, -10)
+glm.translate(view, 0.2, 0.3, -500)
 
 
 program['position'] = lattice
