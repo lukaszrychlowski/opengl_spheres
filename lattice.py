@@ -32,26 +32,22 @@ def random_point(sphere_radius): ## normalized
                     np.random.normal(0, scale=1.0)])
     return normalize(vec) * sphere_radius
 
-
+M = 10
 N = 10000
+
 lattice = np.zeros(3)
 
-for i in range(N):
-    lattice = np.append(lattice, random_point(100))
-for j in range(N):
-   lattice = np.append(lattice, random_point(10))
-for k in range(N):
-   lattice = np.append(lattice, random_point(50))
-for l in range(N):
-    lattice = np.append(lattice, random_point(200))
-for m in range(N):
-    lattice = np.append(lattice, random_point(150))
+for ii in range(10,250,50):
+    for i in range(N):
+        lattice = np.append(lattice, random_point(ii))
+
+#print(lattice)
 #print(lattice)
 #np.savetxt("lattice1.csv", lattice, delimiter=";")
 
 program = gloo.Program(vertex, fragment)
 view = np.eye(4, dtype=np.float32)
-glm.translate(view, 0.2, 0.3, -500)
+glm.translate(view, 0.2, 0.3, -700)
 
 
 program['position'] = lattice
