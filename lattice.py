@@ -6,16 +6,35 @@ vertex = """
     uniform mat4 model; 
     uniform mat4 view; 
     uniform mat4 projection;
+    uniform float antialias;
     attribute vec3 position;
+    attribute float radius;
+    varying float v_pointsize;
+    varying float v_radius;
+
     void main(){
+        v_radius = radius;
         gl_Position = projection * view * model * vec4(position,1.0); 
-        gl_PointSize = 2.0;
+        gl_PointSize = 2.0 * (v_radius + 1.5*antialias);
     }"""
 
+
 fragment = """
-    void main(){
-        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-    }"""
+    uniform float antialias;
+    varying float v_radius;
+
+    void main()
+    {
+        float r = (v_radius + 2.0*antialias);
+        float signed_distance = length(gl_PointCoord.xy - vec2(0.5,0.5)) * 2 * r - v_radius;
+        if( signed_distance < 0 ){
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.8);
+        } 
+        else{
+            discard;
+        }
+    }
+"""
 
 window = app.Window(color=(1,1,1,0))
 theta, phi = 0, 0
@@ -34,12 +53,11 @@ def random_point(sphere_radius): ## normalized
 
 M = 10
 N = 10000
-
 lattice = np.zeros(3)
 
-for ii in range(10,250,50):
+for ii in range(0,250,50):
     for i in range(N):
-        lattice = np.append(lattice, random_point(ii))
+        lattice = np.vstack([lattice, random_point(ii)])
 
 #print(lattice)
 #print(lattice)
@@ -49,8 +67,11 @@ program = gloo.Program(vertex, fragment)
 view = np.eye(4, dtype=np.float32)
 glm.translate(view, 0.2, 0.3, -700)
 
-
 program['position'] = lattice
+#program['position'] = np.random.randn(1000,3)
+program['radius']   = np.full(len(lattice), 1)
+#program['radius'] = 2.0
+program['antialias'] = 1.0
 program['model'] = np.eye(4, dtype=np.float32)
 program['projection'] = np.eye(4, dtype=np.float32)
 program['view'] = view
