@@ -69,7 +69,7 @@ glm.translate(view, 0.2, 0.3, -700)
 
 program['position'] = lattice
 #program['position'] = np.random.randn(1000,3)
-program['radius']   = np.full(len(lattice), 1)
+program['radius']   = np.full(len(lattice), 1.5)
 #program['radius'] = 2.0
 program['antialias'] = 1.0
 program['model'] = np.eye(4, dtype=np.float32)
